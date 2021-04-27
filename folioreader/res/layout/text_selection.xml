@@ -12,7 +12,7 @@
         app:cardUseCompatPadding="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="288dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?popUpWindowBackground">
 
@@ -74,6 +74,7 @@
 
                     <ImageView
                         android:id="@+id/deleteHighlight"
+                        android:visibility="gone"
                         style="@style/ImageViewTextSelectorMarker"
                         app:srcCompat="@drawable/ic_highlight_delete" />
 
@@ -97,7 +98,7 @@
                         android:id="@+id/updateSelection"
                         style="@style/TextViewTextSelector"
                         android:layout_width="wrap_content"
-                        android:visibility="visible"
+                        android:visibility="gone"
                         android:layout_height="wrap_content"
                         android:text="Update" />
 
@@ -121,8 +122,9 @@
 
                     <ImageView
                         android:id="@+id/underlineHighlight"
-                        android:visibility="gone"
                         style="@style/ImageViewTextSelectorMarker"
+                        android:layout_height="39dp"
+                        android:visibility="gone"
                         app:srcCompat="@drawable/ic_format_underlined" />
 
                 </LinearLayout>

@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.folioreader.model.TestModel.RectValues;
+
 public class DbAdapter {
     private static final String TAG = "DBAdapter";
 
@@ -33,6 +35,51 @@ public class DbAdapter {
         return mDatabase.rawQuery("SELECT * FROM " + HighLightTable.TABLE_NAME + " WHERE " + HighLightTable.COL_BOOK_ID + " = \"" + bookId + "\"", null);
     }
 
+    public static Cursor getAllByKey(String table, String[] projection, String key, String value) throws SQLException {
+        return mDatabase.query(table, projection,
+                key + "=?", new String[]{value}, null, null, null, null);
+    }
+
+    public static boolean deleteById(String table, String key, String value) {
+        return mDatabase.delete(table, key + "=?", new String[]{value}) > 0;
+    }
+
+    public static long saveHighLight(ContentValues highlightContentValues) {
+        return mDatabase.insert(HighLightTable.TABLE_NAME, null, highlightContentValues);
+    }
+
+    public static boolean updateHighLight(ContentValues highlightContentValues, String id) {
+        return mDatabase.update(HighLightTable.TABLE_NAME, highlightContentValues, HighLightTable.ID + " = " + id, null) > 0;
+    }
+
+    public static Cursor getHighlightsForPageId(String query, String pageId) {
+        return mDatabase.rawQuery(query, null);
+    }
+
+    public static int getIdForQuery(String query) {
+        Cursor c = mDatabase.rawQuery(query, null);
+        int id ;
+        if (c != null) {
+            c.move(-1);
+            while (c.moveToNext()) {
+                id = c.getInt(c.getColumnIndex(HighLightTable.ID));
+            }
+            c.close();
+        }
+        id = (int) RectValues.RETURN_ID;
+        return id;
+//        int id = -1;
+//        while (c.moveToNext()) {
+//            id = c.getInt(c.getColumnIndex(HighLightTable.ID));
+//        }
+//        c.close();
+//        return id;
+    }
+
+    public static Cursor getHighlightsForId(int id) {
+        return mDatabase.rawQuery("SELECT * FROM " + HighLightTable.TABLE_NAME + " WHERE " + HighLightTable.ID + " = \"" + id + "\"", null);
+    }
+
     public boolean deleteAll(String table) {
         return mDatabase.delete(table, null, null) > 0;
     }
@@ -55,47 +102,11 @@ public class DbAdapter {
                 key + "=?", new String[]{String.valueOf(id)}, null, null, null, null);
     }
 
-    public static Cursor getAllByKey(String table, String[] projection, String key, String value) throws SQLException {
-        return mDatabase.query(table, projection,
-                key + "=?", new String[]{value}, null, null, null, null);
-    }
-
     public Cursor get(String table, long id) throws SQLException {
         return get(table, id, null, FolioDatabaseHelper.KEY_ID);
     }
 
-    public static boolean deleteById(String table, String key, String value) {
-        return mDatabase.delete(table, key + "=?", new String[]{value}) > 0;
-    }
-
     public Cursor getMaxId(String tableName, String key) {
         return mDatabase.rawQuery("SELECT MAX(" + key + ") FROM " + tableName, null);
-    }
-
-    public static long saveHighLight(ContentValues highlightContentValues) {
-        return mDatabase.insert(HighLightTable.TABLE_NAME, null, highlightContentValues);
-    }
-
-    public static boolean updateHighLight(ContentValues highlightContentValues, String id) {
-        return mDatabase.update(HighLightTable.TABLE_NAME, highlightContentValues, HighLightTable.ID + " = " + id, null) > 0;
-    }
-
-    public static Cursor getHighlightsForPageId(String query, String pageId) {
-        return mDatabase.rawQuery(query, null);
-    }
-
-    public static int getIdForQuery(String query) {
-        Cursor c = mDatabase.rawQuery(query, null);
-
-        int id = -1;
-        while (c.moveToNext()) {
-            id = c.getInt(c.getColumnIndex(HighLightTable.ID));
-        }
-        c.close();
-        return id;
-    }
-
-    public static Cursor getHighlightsForId(int id) {
-        return mDatabase.rawQuery("SELECT * FROM " + HighLightTable.TABLE_NAME + " WHERE " + HighLightTable.ID + " = \"" + id + "\"", null);
     }
 }

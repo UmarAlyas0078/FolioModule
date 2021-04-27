@@ -27,7 +27,11 @@ import com.folioreader.Constants
 import com.folioreader.R
 import com.folioreader.model.DisplayUnit
 import com.folioreader.model.HighLight
+import com.folioreader.model.HighlightImpl
 import com.folioreader.model.HighlightImpl.HighlightStyle
+import com.folioreader.model.TestModel.GlobalArray
+import com.folioreader.model.TestModel.NoteModel
+import com.folioreader.model.TestModel.RectValues
 import com.folioreader.model.sqlite.HighLightTable
 import com.folioreader.ui.activity.FolioActivity
 import com.folioreader.ui.activity.FolioActivityCallback
@@ -291,9 +295,11 @@ class FolioWebView : WebView {
 
         viewTextSelection.copySelection.setOnClickListener {
             dismissPopupWindow()
+//            viewTextSelection.copySelection.setText("Edit")
+          //  loadUrl(String.format("javascript:setHighlightStyle('%s')",HighlightStyle.classForStyle(HighlightStyle.Blue)))
             loadUrl("javascript:onTextSelectionItemClicked(${it.id})")
         }
-        viewTextSelection.updateSelection.setOnClickListener{
+        viewTextSelection.updateSelection.setOnClickListener {
             dismissPopupWindow()
             loadUrl("javascript:onTextSelectionItemClicked(${it.id})")
         }
@@ -317,17 +323,15 @@ class FolioWebView : WebView {
                 Log.v(LOG_TAG, "-> onTextSelectionItemClicked -> copySelection -> $selectedText")
                 UiUtil.copyToClipboard(context, selectedText)
 //                val globalArrayList: ArrayList<NoteModel> = GlobalArray.getNoteModels()
-                Log.d("TAG", "Copied: " + selectedText)
-//                Log.d("TAG", "Copied: " + globalArrayList)
                 Toast.makeText(context, context.getString(R.string.copied), Toast.LENGTH_SHORT).show()
                 parentFragment.showBottomSheet(selectedText.toString())
             }
-            R.id.updateSelection->{
+            R.id.updateSelection -> {
                 Log.v(LOG_TAG, "-> onTextSelectionItemClicked -> copySelection -> $selectedText")
                 UiUtil.copyToClipboard(context, selectedText)
                 Log.d("TAG", "Copied: " + selectedText)
                 Toast.makeText(context, context.getString(R.string.copied), Toast.LENGTH_SHORT).show()
-                parentFragment.showBottomSheetUpdate(selectedText.toString())
+               // parentFragment.showBottomSheetUpdate(selectedText.toString())
             }
             R.id.shareSelection -> {
                 Log.v(LOG_TAG, "-> onTextSelectionItemClicked -> shareSelection -> $selectedText")
@@ -489,10 +493,7 @@ class FolioWebView : WebView {
 
             evaluateJavascript("javascript:getSelectionRect()") { value ->
                 val rectJson = JSONObject(value)
-                setSelectionRect(
-                        rectJson.getInt("left"), rectJson.getInt("top"),
-                        rectJson.getInt("right"), rectJson.getInt("bottom")
-                )
+                setSelectionRect(rectJson.getInt("left"), rectJson.getInt("top"), rectJson.getInt("right"), rectJson.getInt("bottom"))
             }
             return false
         }
@@ -674,7 +675,24 @@ class FolioWebView : WebView {
         currentSelectionRect.right = (right * density).toInt()
         currentSelectionRect.bottom = (bottom * density).toInt()
         Log.d(LOG_TAG, "-> setSelectionRect -> $currentSelectionRect")
-
+        //..........chnage........
+        RectValues.leftRect = currentSelectionRect.left
+        RectValues.topRect = currentSelectionRect.top
+        RectValues.rightRect = currentSelectionRect.right
+        RectValues.botomRect = currentSelectionRect.bottom
+        val valuesOfRect: ArrayList<NoteModel> = GlobalArray.getNoteModels()
+        for (i in valuesOfRect.indices) {
+            var left = valuesOfRect.get(i).getmLeft()
+            var top = valuesOfRect.get(i).getmTop()
+            var right = valuesOfRect.get(i).getmRight()
+            var bottom = valuesOfRect.get(i).getmBottom()
+            if (left == RectValues.leftRect && top == RectValues.topRect && right == RectValues.rightRect && bottom == RectValues.botomRect) {
+                var noteText = valuesOfRect.get(i).getmBody()
+                parentFragment.showBottomSheetUpdate(noteText.toString())
+                Log.d("TAG", "noteText: " + noteText)
+            }
+        }
+        //....end..........
         computeTextSelectionRect(currentSelectionRect)
         uiHandler.post { showTextSelectionPopup() }
     }

@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements OnHighlightListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // getHighlightAndSave();
+         getHighlightAndSave();
         folioReader = FolioReader.get()
                 .setOnHighlightListener(this)
                 .setReadLocatorListener(this)
@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements OnHighlightListen
             config.setAllowedDirection(Config.AllowedDirection.VERTICAL_AND_HORIZONTAL);
            // folioReader.setReadLocator(readLocator);
             folioReader.setConfig(config, true)
-                    .openBook("file:///android_asset/TheSilverChair.epub");
+                    .openBook("file:///android_asset/fd.epub");
         });
     }
 

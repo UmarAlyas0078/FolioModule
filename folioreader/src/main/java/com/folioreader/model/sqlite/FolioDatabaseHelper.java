@@ -42,6 +42,14 @@ public class FolioDatabaseHelper extends SQLiteOpenHelper {
         return myWritableDb;
     }
 
+    public SQLiteDatabase getMyReadableDatabase() {
+        if ((myWritableDb == null) || (!myWritableDb.isOpen())) {
+            myWritableDb = this.getReadableDatabase();
+        }
+
+        return myWritableDb;
+    }
+
     @Override
     public void close() {
         super.close();

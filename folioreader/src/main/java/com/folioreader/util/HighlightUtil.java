@@ -7,6 +7,9 @@ import android.util.Log;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.folioreader.model.HighLight;
 import com.folioreader.model.HighlightImpl;
+import com.folioreader.model.TestModel.GlobalArray;
+import com.folioreader.model.TestModel.NoteModel;
+import com.folioreader.model.TestModel.RectValues;
 import com.folioreader.model.sqlite.HighLightTable;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,6 +53,8 @@ public class HighlightUtil {
             long id = HighLightTable.insertHighlight(highlightImpl);
             if (id != -1) {
                 highlightImpl.setId((int) id);
+                RectValues.HIGHLIGHT_ID = id;
+               //GlobalArray.getNoteModels();
                 sendHighlightBroadcastEvent(context, highlightImpl, HighLight.HighLightAction.NEW);
             }
             return rangy;

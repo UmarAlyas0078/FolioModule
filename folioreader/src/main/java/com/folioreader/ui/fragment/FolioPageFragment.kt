@@ -38,6 +38,7 @@ import com.folioreader.model.HighlightImpl
 import com.folioreader.model.TestModel.BottomSheetDialog
 import com.folioreader.model.TestModel.GlobalArray
 import com.folioreader.model.TestModel.NoteModel
+import com.folioreader.model.TestModel.RectValues
 import com.folioreader.model.event.*
 import com.folioreader.model.locators.ReadLocator
 import com.folioreader.model.locators.SearchLocator
@@ -455,22 +456,13 @@ class FolioPageFragment : Fragment(),
     private val webViewClient = object : WebViewClient() {
 
         override fun onPageFinished(view: WebView, url: String) {
-
+           var hight =  view.height
+            Log.d("TAG", "onPageFinished: " + hight)
             mWebview!!.loadUrl("javascript:checkCompatMode()")
             mWebview!!.loadUrl("javascript:alert(getReadingTime())")
-
             if (mActivityCallback!!.direction == Config.Direction.HORIZONTAL)
                 mWebview!!.loadUrl("javascript:initHorizontalDirection()")
-
-            view.loadUrl(
-                    String.format(
-                            getString(R.string.setmediaoverlaystyle),
-                            HighlightImpl.HighlightStyle.classForStyle(
-                                    HighlightImpl.HighlightStyle.Normal
-                            )
-                    )
-            )
-
+            view.loadUrl(String.format(getString(R.string.setmediaoverlaystyle), HighlightImpl.HighlightStyle.classForStyle(HighlightImpl.HighlightStyle.Normal)))
             val rangy = HighlightUtil.generateRangyString(pageName)
             this@FolioPageFragment.rangy = rangy
             if (!rangy.isEmpty())
@@ -847,12 +839,7 @@ class FolioPageFragment : Fragment(),
                     )
             )
         } else {
-            mWebview!!.loadUrl(
-                    String.format(
-                            "javascript:setHighlightStyle('%s')",
-                            HighlightImpl.HighlightStyle.classForStyle(style)
-                    )
-            )
+            mWebview!!.loadUrl(String.format("javascript:setHighlightStyle('%s')", HighlightImpl.HighlightStyle.classForStyle(style)))
         }
     }
 
@@ -875,34 +862,33 @@ class FolioPageFragment : Fragment(),
 //              var regix = Regex("[\$&+,:;=?@#|'<>.^*()%!-]")
             var moreRemove = remove.replace("\\n", "")
             var lineRemove = moreRemove.replace("\\", "").replace("\r", "").replace("\n", "").replace(",", "")
-            GlobalArray.noteModels.add(NoteModel(lineRemove, ""))
+            GlobalArray.noteModels.add(NoteModel(lineRemove, "",RectValues.HIGHLIGHT_ID))
         }
-        // html!!.split(":")[1].split(",")[0]
         Log.d("TAG", "onReceiveHighlights: " + GlobalArray.getNoteModels())
     }
 
 
     fun showBottomSheet(s: String) {
         title = s
-        val bottomSheetDialog = BottomSheetDialog(requireActivity(), title, this)
+        val bottomSheetDialog = BottomSheetDialog(requireActivity(), "Add Note", "Cancel", this)
         bottomSheetDialog?.show(activity!!.supportFragmentManager, "message")
     }
 
     fun showBottomSheetUpdate(s: String) {
         updateNote = s
         Log.d("TAG", "showBottomSheetUpdate: " + updateNote)
-        val listOfUpdate: ArrayList<NoteModel> = GlobalArray.getNoteModels();
-        for (i in listOfUpdate.indices) {
-            var regix = Regex("[\$&+,:;=?@#|'<>.^*()%!-]")
-            var lineRemove = updateNote!!.replace("\\", "").replace("\r", "").replace("\n", "").replace("\"", "")
-            var stes = lineRemove.replace(regix, "").replace(" ", "")
-            var p = listOfUpdate.get(i).getmTitle().replace(regix, "").replace(" ", "")
-            if (stes.equals(p)) {
-                noteTitle = listOfUpdate.get(i).getmTitle()
-                noteBody = listOfUpdate.get(i).getmBody()
-            }
-        }
-        val bottomSheetDialog = BottomSheetDialog(requireActivity(), noteTitle, noteBody, this)
+        /*    val listOfUpdate: ArrayList<NoteModel> = GlobalArray.getNoteModels();
+            for (i in listOfUpdate.indices) {
+                var regix = Regex("[\$&+,:;=?@#|'<>.^*()%!-]")
+                var lineRemove = updateNote!!.replace("\\", "").replace("\r", "").replace("\n", "").replace("\"", "")
+                var stes = lineRemove.replace(regix, "").replace(" ", "")
+                var p = listOfUpdate.get(i).getmTitle().replace(regix, "").replace(" ", "")
+                if (stes.equals(p)) {
+                    noteTitle = listOfUpdate.get(i).getmTitle()
+                    noteBody = listOfUpdate.get(i).getmBody()
+                }
+            }*/
+        val bottomSheetDialog = BottomSheetDialog(requireActivity(), "", updateNote, "Edit", this)
         bottomSheetDialog?.show(activity!!.supportFragmentManager, "message")
     }
 
@@ -943,7 +929,6 @@ class FolioPageFragment : Fragment(),
         if (mWebview != null) mWebview!!.destroy()
     }
 
-
     override fun onError() {}
 
     fun scrollToHighlightId(highlightId: String) {
@@ -979,18 +964,20 @@ class FolioPageFragment : Fragment(),
     override fun BottomSheetClick(s: String?) {
         Log.d("TAG", "getdata: " + s)
         val globalArrayList: ArrayList<NoteModel> = GlobalArray.getNoteModels()
+        val highlightImpl = HighlightImpl()
         for (i in globalArrayList.indices) {
-            /*     var repl = globalArrayList.get(i).getmTitle().trim().split("""\n""")
-                 var splitTitle = repl.get(i).trim()
-                 var spl = splitTitle.replace("\"", "").trim()
-                 var str = title!!.replace("\n", "").replace("\r", "").trim()*/
-            /*  var regix = Regex("[\$&+,:;=?@#|'<>.^*()%!-]")
-              var ste = title!!.replace(regix,"").trim()*/
             var regix = Regex("[\$&+,:;=?@#|'<>.^*()%!-]")
             var lineRemove = title!!.replace("\\", "").replace("\r", "").replace("\n", "").replace("\"", "")
             var stes = lineRemove.replace(regix, "").replace(" ", "")
             var p = globalArrayList.get(i).getmTitle().replace(regix, "").replace(" ", "")
             if (stes.equals(p)) {
+                globalArrayList.get(i).setmLeft(RectValues.leftRect)
+                globalArrayList.get(i).setmTop(RectValues.topRect)
+                globalArrayList.get(i).setmRight(RectValues.rightRect)
+                globalArrayList.get(i).setmBottom(RectValues.botomRect)
+                RectValues.RETURN_ID = globalArrayList.get(i).mhighlightId
+                mWebview!!.loadUrl(String.format("javascript:setHighlightStyle('%s')", HighlightImpl.HighlightStyle.classForStyle(HighlightImpl.HighlightStyle.Blue)))
+                mWebview!!.dismissPopupWindow()
                 globalArrayList.get(i).setmBody(s)
             }
         }

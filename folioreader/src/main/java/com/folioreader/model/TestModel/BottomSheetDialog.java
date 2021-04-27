@@ -13,6 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.folioreader.R;
+import com.folioreader.model.HighlightImpl;
+import com.folioreader.ui.fragment.FolioPageFragment;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 public class BottomSheetDialog extends BottomSheetDialogFragment {
@@ -20,17 +22,20 @@ public class BottomSheetDialog extends BottomSheetDialogFragment {
     Context context;
     String data;
     String body;
+    String mEdit;
 
-    public BottomSheetDialog(Context context, String data, BottomSheetListner bottomSheetListner) {
+    public BottomSheetDialog(Context context, String data,String mEdit, BottomSheetListner bottomSheetListner) {
         this.context = context;
         this.data = data;
+        this.mEdit = mEdit;
         this.bottomSheetListner = bottomSheetListner;
     }
 
-    public BottomSheetDialog(Context context, String data, String body, BottomSheetListner bottomSheetListner) {
+    public BottomSheetDialog(Context context, String data, String body,String mEdit, BottomSheetListner bottomSheetListner) {
         this.context = context;
         this.data = data;
         this.body = body;
+        this.mEdit = mEdit;
         this.bottomSheetListner = bottomSheetListner;
     }
 
@@ -46,8 +51,10 @@ public class BottomSheetDialog extends BottomSheetDialogFragment {
         TextView textView = view.findViewById(R.id.tv_show_message);
         final EditText note = view.findViewById(R.id.add_note);
         Button button = view.findViewById(R.id.button1);
+        TextView button2 = view.findViewById(R.id.tv_cancel);
         textView.setText(data);
         note.setText(body);
+        button2.setText(mEdit);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -15,7 +15,7 @@
     <string name="minutes_left">%1$d minutes ·&#160;</string>
     <string name="minute_left">%1$d minute ·&#160;</string>
     <string name="less_than_minute">Less than a minute ·&#160;</string>
-
+<string name="add_note_hint">Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea</string>
     <string name="copied">Copied</string>
     <string name="send_to">Send to</string>
 
